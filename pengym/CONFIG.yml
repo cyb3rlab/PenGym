@@ -20,7 +20,7 @@ service_port:
 
 # File path information
 file_path:
-  e_ssh_pwd_file: /home/thanhnguyen/release/PenGym/dictionary.txt
+  e_ssh_pwd_file: /home/cyuser/PenGym/pengym/dictionary.txt
 
 # Cyber range configuration
 cyber_range:
