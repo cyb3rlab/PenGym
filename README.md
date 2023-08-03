@@ -36,13 +36,13 @@ specifically designed for RL agent training. Currently, CyRIS must be
 executed manually to create the cyber range, but in the future this
 process will be automated.
 
-<div align=center><img src='images/pengym_overview.png'></div>
+<div align=center><img src='figures/pengym_overview.png'></div>
 
 
 ## Prerequisites
 
 PenGym has several prerequisites that must be installed before using
-it, as it will be explained next.
+it, as it will be explained next:
 
 1. **NASim**: The Action/State module implementation in PenGym is
    based on extending the functionality of the [Network Attack
@@ -93,9 +93,9 @@ it, as it will be explained next.
    ```
 
    Once Metasploit is installed, you should start the RPC daemon by
-   running the command below (if you change the password or the msfrpc
-   client port, you will also need to update the file
-   `pengym/CONFIG.yaml`).
+   running the command below (if you change the password or the MSF
+   RPC client port, you will also need to update the file
+   `pengym/CONFIG.yml`):
 
    ```
    msfrpcd -P my_password
@@ -104,9 +104,23 @@ it, as it will be explained next.
 ## Setup
 
 Once the prerequisite installation is complete, to set up the most
-recent version of PenGym you only need to obtain its source code,
-either from the most recent release or by using the `git clone`
-command.
+recent version of PenGym you need to obtain its source code, either
+from the most recent release or by using the `git clone` command. Then
+you should update the following files to ensure that they match your
+installation:
+
+1. `pengym/CONFIG.yml`, in which global PenGym settings are
+configured. In particular, the **host_ip** settting specifies the IP
+address of the host on which the cyber range is deployed, and the
+**e_ssh_pwd_file** specifies the location of the dictionary file used
+for the SSH exploit action implementation.
+
+2. `database/tiny/tiny-pengym-cyris.yml`, which is the CyRIS cyber
+range description corresponding to the scenario `tiny`. In particular,
+the **basevm_config_file** setting specifies the location of the base
+VM image used to create cyber range VMs, and the **src** setting
+specifies the location of the directory containing the cyber range
+resources for the **copy_content** CyRIS task.
 
 Currently, PenGym supports all the features of the `tiny` scenario
 defined in NASim. However, PenGym uses the `pkexec` package for
@@ -119,7 +133,7 @@ action is implemented instead of **pe_tomcat**.
 In order to see PenGym in action, you must first create the cyber
 range, then run the included demo script. The example cyber range is
 based on the `tiny` scenario in NASim, and is defined in the file
-`cyris-pengym-tiny.yaml`; this file may need to be changed depending
+`tiny-pengym-cyris.yml`; this file may need to be changed depending
 on your CyRIS setup, so check it before proceeding. The example agent
 is currently a deterministic agent that can reach the scenario goals
 in 14 steps; its implementation and default action sequence are
@@ -132,18 +146,20 @@ located in the PenGym directory):
    installed:
 
    ```
-   <PATH_TO_CYRIS>/main/cyris.py database/tiny/cyris-pengym-tiny.yaml <PATH_TO_CYRIS>/CONFIG
+   <CYRIS_PATH>/main/cyris.py database/tiny/tiny-pengym-cyris.yml <CYRIS_PATH>/CONFIG
    ```
 
    If you modify the cyber range settings, such as the **range_id**
    value in the CyRIS scenario file, you also need to update the
    settings in the file `pengym/utilities.py`, in particular the IP
-   addresses in **host_map** and bridge names in **bridge_map**.
+   addresses in **host_map** and bridge names in **bridge_map**. In
+   addition, the IP addresses in the firewall configuration scripts in
+   `database/tiny/resources/scripts/firewall` must also be updated.
 
 2. Run the PenGym demo script with the configuration file as argument:
 
    ```
-   python3 run.py ./pengym/CONFIG.yaml
+   python3 run.py ./pengym/CONFIG.yml
    ```
 
    **NOTE:** You can use the option `-h` to find out more about the
@@ -162,7 +178,7 @@ located in the PenGym directory):
      - Agent type: deterministic
      - PenGym cyber range execution enabled: True
      - NASim simulation execution enabled: False
-   * Read configuration from './pengym/CONFIG.yaml'...
+   * Read configuration from './pengym/CONFIG.yml'...
    * Initialize MSF RPC client...
    * Initialize Nmap Scanner...
    * Create environment using scenario 'tiny'...
