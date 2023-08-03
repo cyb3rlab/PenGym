@@ -1,0 +1,36 @@
+
+#########################################
+# Global configuration values in PenGym
+#########################################
+
+# IP of host on which the cyber range is running
+host_ip: 172.16.1.4
+
+# Configuration of the MSF RPC service
+msfrpc_config:
+  msfrpc_client_pwd: my_password
+  port: 55553
+  ssl: True
+
+# Mapping of service names to port numbers
+service_port:
+  ssh: 22
+  ftp: 21
+  http: 8080
+
+# File path information
+file_path:
+  e_ssh_pwd_file: /home/thanhnguyen/release/PenGym/dictionary.txt
+
+# Cyber range configuration
+cyber_range:
+
+  guest_settings:
+    # Tasks
+    tasks:
+      add_account:
+        # Account, password and password file for the e_ssh action
+        ssh:
+          account: test
+          passwd: test1234
+          pwd_file: e_ssh_pwd_file
