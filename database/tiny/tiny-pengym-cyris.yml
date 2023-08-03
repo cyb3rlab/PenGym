@@ -55,7 +55,7 @@
       - package_manager: apt-get
         name: default-jdk tomcat9
     - copy_content:
-      - src: /home/cyuser/release/PenGym/database
+      - src: /home/cyuser/PenGym/database
         dst: /bin/cyberrange
     - execute_program:
       - program: /bin/cyberrange/database/tiny/resources/scripts/firewall/host-3-0_firewall.sh
