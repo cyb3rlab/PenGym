@@ -101,7 +101,8 @@ def init_config_info(config_path):
         with open(config_path, 'r') as file:
             config_info = yaml.load(file, Loader=yaml.FullLoader)
     except Exception as e:
-        print(f"* WARNING: Failed to parse the config file: {e}", file=sys.stderr)
+        print(f"* ERROR: Failed to load the configuration file: {e}", file=sys.stderr)
+        sys.exit(2)
 
 def init_msfrpc_client():
     """Initialize the Metasploit client
@@ -115,7 +116,8 @@ def init_msfrpc_client():
         global msfrpc_client
         msfrpc_client = MsfRpcClient(my_password, port=port, ssl=ssl)
     except Exception as e:
-        print(f"* WARNING: Failed to connect to MSF RPC client: {e}", file=sys.stderr)
+        print(f"* ERROR: Failed to connect to MSF RPC client: {e}", file=sys.stderr)
+        sys.exit(2)
 
 def cleanup_msfrpc_client():
     """Clean up the Metasploit client, and close sessions after the agent finishes running 
@@ -136,6 +138,7 @@ def init_nmap_scanner():
         nmap_scanner = nmap.PortScanner()
     except Exception as e:
         print(f"* WARNING: Failed to initialize NMap: {e}", file=sys.stderr)
+        sys.exit(2)
 
 def map_result_list_to_dict(resultValues, scenarioValues, bool=False):
     """Transform the result values from PenGym format (list) to NASim format (dictionary of all values in scenario with True/False)
