@@ -21,8 +21,8 @@
         dst: /bin/cyberrange
     - execute_program:
       - program: /bin/cyberrange/database/tiny/resources/scripts/firewall/host-1-0_firewall.sh
-        interpreter: interpreter
-        execute_time: execute_time
+        interpreter: bash
+        execute_time: after_clone
   - id: host-2-0
     basevm_host: host_1
     basevm_config_file: /home/cyuser/images/ubuntubase.xml
@@ -40,8 +40,8 @@
         dst: /bin/cyberrange
     - execute_program:
       - program: /bin/cyberrange/database/tiny/resources/scripts/firewall/host-2-0_firewall.sh
-        interpreter: interpreter
-        execute_time: execute_time
+        interpreter: bash
+        execute_time: after_clone
   - id: host-3-0
     basevm_host: host_1
     basevm_config_file: /home/cyuser/images/ubuntubase.xml
@@ -59,8 +59,8 @@
         dst: /bin/cyberrange
     - execute_program:
       - program: /bin/cyberrange/database/tiny/resources/scripts/firewall/host-3-0_firewall.sh
-        interpreter: interpreter
-        execute_time: execute_time
+        interpreter: bash
+        execute_time: after_clone
 - clone_settings:
   - range_id: 35
     hosts:
