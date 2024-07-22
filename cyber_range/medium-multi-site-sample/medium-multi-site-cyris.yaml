@@ -1,0 +1,537 @@
+- host_settings:
+  - id: host_1
+    mgmt_addr: localhost
+    virbr_addr: 192.168.122.1
+    account: cyuser
+- guest_settings:
+  - id: host-1-0
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - add_account:
+      - account: test
+        passwd: test1234
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/resources/tomcat/install_tomcat.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-1-0_firewall.sh
+        interpreter: bash
+        execute_time: after_clone
+  - id: host-1-1
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - add_account:
+      - account: test
+        passwd: test1234
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/resources/tomcat/install_tomcat.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-1-1_firewall.sh
+        interpreter: bash
+        execute_time: after_clone
+  - id: host-2-0
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/resources/smtp/prepare_pcks.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/resources/smtp/config_smtp.sh
+        args: /bin/cyberrange/database/resources/smtp/opensmtpd-6.6.1p1
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/resources/smtp/start_smtp.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-2-0_firewall.sh
+          /bin/cyberrange/database/configuraion_scripts/stop_ssh_service.sh
+        interpreter: bash
+        execute_time: after_clone
+  - id: host-2-1
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/resources/smtp/prepare_pcks.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/resources/smtp/config_smtp.sh
+        args: /bin/cyberrange/database/resources/smtp/opensmtpd-6.6.1p1
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/resources/smtp/start_smtp.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/resources/cron/prepare_pcks.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/resources/cron/config_cron.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-2-1_firewall.sh
+          /bin/cyberrange/database/configuraion_scripts/stop_ssh_service.sh
+        interpreter: bash
+        execute_time: after_clone
+  - id: host-3-0
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - add_account:
+      - account: test
+        passwd: test1234
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/resources/tomcat/install_tomcat.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-3-0_firewall.sh
+        interpreter: bash
+        execute_time: after_clone
+  - id: host-3-1
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - add_account:
+      - account: test
+        passwd: test1234
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/resources/http/prepare_pcks.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/resources/http/config_apache.sh
+        args: /bin/cyberrange/database/resources/http/httpd-2.4.49
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/resources/http/start_apache.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-3-1_firewall.sh
+        interpreter: bash
+        execute_time: after_clone
+  - id: host-3-2
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - add_account:
+      - account: test
+        passwd: test1234
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-3-2_firewall.sh
+        interpreter: bash
+        execute_time: after_clone
+  - id: host-3-3
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - add_account:
+      - account: test
+        passwd: test1234
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-3-3_firewall.sh
+        interpreter: bash
+        execute_time: after_clone
+  - id: host-3-4
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - add_account:
+      - account: test
+        passwd: test1234
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/resources/tomcat/install_tomcat.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-3-4_firewall.sh
+        interpreter: bash
+        execute_time: after_clone
+  - id: host-3-5
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - add_account:
+      - account: test
+        passwd: test1234
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-3-5_firewall.sh
+        interpreter: bash
+        execute_time: after_clone
+  - id: host-4-0
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/resources/ftp/prepare_pcks.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/resources/ftp/config_vsftpd.sh
+        args: /bin/cyberrange/database/resources/ftp/vsftpd-2.3.4
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/resources/proftpd/prepare_pcks.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/resources/proftpd/config_proftpd.sh
+        args: /bin/cyberrange/database/resources/proftpd/proftpd-1.3.3 host-4-0
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/resources/proftpd/start_proftpd.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-4-0_firewall.sh
+          /bin/cyberrange/database/configuraion_scripts/stop_ssh_service.sh
+        interpreter: bash
+        execute_time: after_clone
+  - id: host-4-1
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/resources/ftp/prepare_pcks.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/resources/ftp/config_vsftpd.sh
+        args: /bin/cyberrange/database/resources/ftp/vsftpd-2.3.4
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/resources/proftpd/prepare_pcks.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/resources/proftpd/config_proftpd.sh
+        args: /bin/cyberrange/database/resources/proftpd/proftpd-1.3.3 host-4-1
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/resources/proftpd/start_proftpd.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-4-1_firewall.sh
+          /bin/cyberrange/database/configuraion_scripts/stop_ssh_service.sh
+        interpreter: bash
+        execute_time: after_clone
+  - id: host-5-0
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/resources/ftp/prepare_pcks.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/resources/ftp/config_vsftpd.sh
+        args: /bin/cyberrange/database/resources/ftp/vsftpd-2.3.4
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/resources/proftpd/prepare_pcks.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/resources/proftpd/config_proftpd.sh
+        args: /bin/cyberrange/database/resources/proftpd/proftpd-1.3.3 host-5-0
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/resources/proftpd/start_proftpd.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/resources/cron/prepare_pcks.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/resources/cron/config_cron.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-5-0_firewall.sh
+          /bin/cyberrange/database/configuraion_scripts/stop_ssh_service.sh
+        interpreter: bash
+        execute_time: after_clone
+  - id: host-5-1
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/resources/ftp/prepare_pcks.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/resources/ftp/config_vsftpd.sh
+        args: /bin/cyberrange/database/resources/ftp/vsftpd-2.3.4
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/resources/http/prepare_pcks.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/resources/http/config_apache.sh
+        args: /bin/cyberrange/database/resources/http/httpd-2.4.49
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/resources/http/start_apache.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-5-1_firewall.sh
+          /bin/cyberrange/database/configuraion_scripts/stop_ssh_service.sh
+        interpreter: bash
+        execute_time: after_clone
+  - id: host-6-0
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - add_account:
+      - account: test
+        passwd: test1234
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/resources/tomcat/install_tomcat.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-6-0_firewall.sh
+        interpreter: bash
+        execute_time: after_clone
+  - id: host-6-1
+    basevm_host: host_1
+    basevm_config_file: /home/cyuser/images/ubuntubase.xml
+    basevm_type: kvm
+    tasks:
+    - add_account:
+      - account: test
+        passwd: test1234
+    - copy_content:
+      - src: /home/cyuser/public/PenGym/database
+        dst: /bin/cyberrange
+      - src: /home/cyuser/public/PenGym/cyber_range
+        dst: /bin/cyberrange
+    - execute_program:
+      - program: /bin/cyberrange/database/resources/samba/prepare_pcks.sh
+        interpreter: bash
+      - program: /bin/cyberrange/database/resources/samba/config_samba.sh
+        args: /bin/cyberrange/database/resources/samba/samba-4.5.9
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/resources/samba/start_samba.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+        interpreter: bash
+        execute_time: after_clone
+      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+        args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-6-1_firewall.sh
+        interpreter: bash
+        execute_time: after_clone
+- clone_settings:
+  - range_id: 44
+    hosts:
+    - host_id: host_1
+      instance_number: 1
+      guests:
+      - guest_id: host-1-0
+        entry_point: true
+        number: 1
+      - guest_id: host-1-1
+        number: 1
+      - guest_id: host-2-0
+        number: 1
+      - guest_id: host-2-1
+        number: 1
+      - guest_id: host-3-0
+        number: 1
+      - guest_id: host-3-1
+        number: 1
+      - guest_id: host-3-2
+        number: 1
+      - guest_id: host-3-3
+        number: 1
+      - guest_id: host-3-4
+        number: 1
+      - guest_id: host-3-5
+        number: 1
+      - guest_id: host-4-0
+        number: 1
+      - guest_id: host-4-1
+        number: 1
+      - guest_id: host-5-0
+        number: 1
+      - guest_id: host-5-1
+        number: 1
+      - guest_id: host-6-0
+        number: 1
+      - guest_id: host-6-1
+        number: 1
+      topology:
+      - type: custom
+        networks:
+        - name: link01
+          members: host-1-0.eth0, host-1-1.eth0
+        - name: link04
+          members: host-4-0.eth0, host-4-1.eth0
+        - name: link05
+          members: host-5-0.eth0, host-5-1.eth0
+        - name: link06
+          members: host-6-0.eth0, host-6-1.eth0
+        - name: link12
+          members: host-1-0.eth1, host-1-1.eth1, host-2-0.eth0, host-2-1.eth0
+        - name: link13
+          members: host-1-0.eth2, host-1-1.eth2, host-3-0.eth0, host-3-1.eth0, host-3-2.eth0,
+            host-3-3.eth0, host-3-4.eth0, host-3-5.eth0
+        - name: link23
+          members: host-2-0.eth1, host-2-1.eth1, host-3-0.eth1, host-3-1.eth1, host-3-2.eth1,
+            host-3-3.eth1, host-3-4.eth1, host-3-5.eth1
+        - name: link24
+          members: host-2-0.eth2, host-2-1.eth2, host-4-0.eth1, host-4-1.eth1
+        - name: link25
+          members: host-2-0.eth3, host-2-1.eth3, host-5-0.eth1, host-5-1.eth1
+        - name: link26
+          members: host-2-0.eth4, host-2-1.eth4, host-6-0.eth1, host-6-1.eth1
