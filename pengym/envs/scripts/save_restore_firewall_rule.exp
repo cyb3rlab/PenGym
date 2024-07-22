@@ -1,0 +1,69 @@
+#!/usr/bin/expect
+
+# Set the login credentials for the virtual machine
+set vm_username "root"
+set vm_password "theroot"
+
+# Access the first arg (index 0)
+set vm_name [lindex $argv 0]
+set flag [lindex $argv 1]
+
+# Set the command to be executed on the virtual machine
+set save_firewall_rule "iptables-save > firewall_original"
+set restore_firewall_rule "iptables-restore < firewall_original"
+
+# Spawn the virsh console command
+spawn virsh console "$vm_name"
+
+# Expect a prompt indicating that the console is ready
+expect "Escape character is"
+
+# Send 'Enter' to access the console
+send "\r"
+
+set timeout 1 ;# Set a timeout value in seconds
+expect {
+    "login:" {
+        # Login prompt found, send the password
+        send "$vm_username\r"
+    }
+    timeout {
+        # Handle the case where the "login" prompt was not found within the timeout
+        puts "Timeout: Login prompt not found!"
+    }
+}
+expect {
+    "Password:" {
+        # Password prompt found, send the password
+        send "$vm_password\r"
+    }
+    timeout {
+        # Handle the case where the "login" prompt was not found within the timeout
+        puts "Timeout: Password prompt not found!"
+    }
+}
+
+# Send the command to execute on the virtual machine
+# Check if flag is save or restore
+
+if {$flag == "save"} {
+    send "$save_firewall_rule\r"
+} elseif {$flag == "restore"} {
+    send "$restore_firewall_rule\r"
+} else {
+    puts "Error"
+}
+
+sleep 1
+
+# Detach from the console (Ctrl + square_bracket)
+send "\x1d"
+
+# Wait for a moment
+sleep 1
+
+# Send 'Ctrl+5' to exit the console
+send "\x05"
+
+# Wait for the process to finish
+expect eof
