@@ -28,14 +28,16 @@ class PenGymNetwork(Network):
             State: the state of the host after the action is performed
             ActionObservation: the result of the action
         """
+        utils.current_state = state # Get the current state of the network
 
+        start = time.time()
         next_state, obs = super().perform_action(state, action)
-
+        end = time.time()
         # Catch actions that did not succeed in the superclass function
         # PENGYM_ERROR is used to check if this error comes from PenGym or not; consequently we do not print a failure
         # that occured in the super function if the error has already been printed in a PenGym function
         if not obs.success and not utils.PENGYM_ERROR:
-            utils.print_failure(action, obs, storyboard.TAG_NASIM_PENGYM)
+            utils.print_failure(action, obs, storyboard.TAG_NASIM_PENGYM, end-start)
 
         return next_state, obs
 
@@ -69,7 +71,8 @@ class PenGymNetwork(Network):
             if not next_state.host_compromised(action.target):
                 result = ActionResult(False, connection_error=True) # NASim code: ActionResult(False, 0.0, connection_error=True)
                 utils.PENGYM_ERROR = True
-                utils.print_failure(action, result, storyboard.PENGYM)
+                end = time.time()
+                utils.print_failure(action, result, storyboard.PENGYM, end-start)
 
             else:
 
@@ -78,7 +81,7 @@ class PenGymNetwork(Network):
 
                 #Get list of available port in current network environment
                 scenario_services = utils.scenario.services
-                ports = utils.map_services_to_ports(scenario_services)
+                ports = utils.map_services_to_ports(scenario_services, subnet=True)
 
                 # Get list of hosts in scenario
                 scenario_hosts = list(utils.scenario.hosts.keys())
@@ -128,7 +131,7 @@ class PenGymNetwork(Network):
                     logging.warning(f"Result of do_subnet_scan(): {subnet_scan_result}")
                     result = ActionResult(False, undefined_error=True) # connection_error may be more appropriate
                     utils.PENGYM_ERROR = True
-                    utils.print_failure(action, result, storyboard.PENGYM)
+                    utils.print_failure(action, result, storyboard.PENGYM, end-start)
 
                 # Update host_is_discovered list
                 self.update_host_is_discovered_list(discovered_list)
@@ -143,16 +146,94 @@ class PenGymNetwork(Network):
             if result.success:
                 print(f"  Host {action.target} Action '{action.name}' SUCCESS: discovered={result.discovered} newly_discovered={result.newly_discovered} Execution Time: {end-start:1.6f}{tag_nasim}")
             else:
-                utils.print_failure(action, result, storyboard.NASIM)
+                utils.print_failure(action, result, storyboard.NASIM, end-start)
 
         return next_state, result
 
-    ###########################################################################################
+    # Override function in NASim
+    def traffic_permitted(self, state, host_addr, service):
+        """Checks whether the subnet and host firewalls permits traffic to a
+        given host using this service, based on current set of compromised hosts on
+        network.
+        
+        Args:
+            state (State): the current state of environment
+            host_addr (tuple): host address
+            service (str): service name
+        """
+        for src_addr in self.address_space:
+            src_compromised = state.host_compromised(src_addr)
+            if not state.host_compromised(src_addr) and \
+               not self.subnet_public(src_addr[0]):
+                continue
+            if not self.subnet_traffic_permitted(
+                    src_addr[0], host_addr[0], service, src_compromised
+            ):
+                continue
+            if self.host_traffic_permitted(src_addr, host_addr, service):
+                return True
+        return False
+    
+    # Revise for issue in NASim (since with current version of python, nasim is updated an can not modify)
+    def subnet_traffic_permitted(self, src_subnet, dest_subnet, service, src_compromised=True):
+        """Checks whether the subnet firewalls permits traffic to a specific service
+        
+        Args:
+            src_subnet (int): source subnet
+            dest_subnet (int): destination subnet
+            service (str): service name
+            src_compromised (bool, optional): True if there is a compromised host within source subnet
+        """
+        if src_subnet == dest_subnet:
+            
+            # NOTE: After new version of NASim release -> Change: Check in case internet and subnet 1 (for example exploit any host in subnet1 that firewall is not allowed)
+            if src_compromised:
+                return True
+
+            if self.subnet_public(src_subnet) and not service in self.firewall[(0, dest_subnet)]:
+                return False
+            
+            # in same subnet so permitted
+            return True
+        if not self.subnets_connected(src_subnet, dest_subnet):
+            return False
+        return service in self.firewall[(src_subnet, dest_subnet)]
+    
+    def has_required_remote_permission(self, state, action):
+        """Checks attacker has necessary permissions for remote action 
+        
+        Args:
+            state (State): the current state of the network
+            action (Action): the action to perform
+        """
+
+        if self.subnet_public(action.target[0]):
+            return True
+
+        # NOTE: Add new check same host in exploit_remote
+        for src_addr in self.address_space:
+            if not state.host_compromised(src_addr):
+                continue
+            if action.is_scan() and \
+               not self.subnets_connected(src_addr[0], action.target[0]):
+                continue
+           
+            if action.is_exploit() and \
+               (not self.subnet_traffic_permitted(
+                   src_addr[0], action.target[0], action.service)
+                or src_addr == action.target):
+                continue
+            
+            if state.host_has_access(src_addr, action.req_access):
+                return True
+        
+        return False
+
     def do_subnet_scan(self, subnet_address, nm, ports=False):
         """Perform the subnet scan
 
         Args:
-            subnet_address (string) : string of subnet address
+            subnet_address (str) : string of subnet address
             nm (PortScanner): Nmap port scanner object
             ports (list): list of ports to be scanned
 
@@ -192,7 +273,6 @@ class PenGymNetwork(Network):
 
         return hosts_list
 
-    ###########################################################################################
     def define_newly_discovered_hosts(self, discovery_host_list):
         """Define the list of newly discovered hosts from list of discovered hosts
 
@@ -211,7 +291,6 @@ class PenGymNetwork(Network):
 
         return newly_discovered
 
-    ###########################################################################################
     def update_host_is_discovered_list(self, discovery_host_list):
         """Update the list of discovered host
 
