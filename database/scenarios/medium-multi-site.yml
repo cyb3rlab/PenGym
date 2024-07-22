@@ -1,0 +1,194 @@
+# A WAN which has multiple 3 remote sites (subnets) connected to the main site
+# sensitive hosts:
+# 1) a server in server subnet on the main site,
+# 2) a host in user subnet in main site
+#
+# main site has 3 subnets (1 server, 1 DMZ, 1 user)
+# subnet 1 = main site DMZ (exposed, but not vulnerable) - contains 2 webservers
+# subnet 2 = main site server (not exposed) - contains 2 data servers
+# subnet 3 = main site user (not exposed) - contains 6 user hosts
+# subnet 4 = remote site 1 (exposed) - contains 2 user hosts
+# subnet 5 = remote site 2 (exposed) - contains 2 user hosts
+# subnet 6 = remote site 3 (exposed) - contains 2 user hosts
+# each remote site is connected to main site server subnet
+#
+# 16 hosts
+# 6 subnets
+# 2 OS
+# 5 services
+# 3 processes
+# 5 exploits
+# 3 priv esc
+#
+# |A| = 16 * (5 + 3 + 4) = 192
+#
+# Optimal path:
+#  (e_samba, (6, 1)) -> (subnet_scan, (6, 1)) -> (e_smtp, (2, 1)) -> (subnet_scan, (2, 1))
+#     -> (e_http, (3, 1)) -> (e_ssh, (3, 4)) -> (pe_tomcat, (3, 4))
+#  Score = 187
+#
+subnets: [2, 2, 6, 2, 2, 2]
+topology: [[ 1, 1, 0, 0, 1, 1, 1],    # 0 - internet
+           [ 1, 1, 1, 1, 0, 0, 0],    # 1 - MS-DMZ
+           [ 0, 1, 1, 1, 1, 1, 1],    # 2 - MS-Server
+           [ 0, 1, 1, 1, 0, 0, 0],    # 3 - MS-User
+           [ 1, 0, 1, 0, 1, 0, 0],    # 4 - RS-1
+           [ 1, 0, 1, 0, 0, 1, 0],    # 5 - RS-2
+           [ 1, 0, 1, 0, 0, 0, 1]]    # 6 - RS-3
+sensitive_hosts:
+  (2, 1): 100
+  (3, 4): 100
+os:
+  - linux
+  #- windows
+services:
+  - ssh
+  - ftp
+  - http
+  - samba
+  - smtp
+processes:
+  - tomcat
+  - proftpd #daclsvc
+  - cron #schtask
+exploits:
+  e_ssh:
+    service: ssh
+    os: linux
+    prob: 0.999999 #0.9
+    cost: 3
+    access: user
+  e_ftp:
+    service: ftp
+    os: linux #windows
+    prob: 0.999999 #0.9
+    cost: 1
+    access: root
+  e_http:
+    service: http
+    os: None
+    prob: 0.999999 #0.9
+    cost: 2
+    access: user
+  e_samba:
+    service: samba
+    os: linux
+    prob: 0.999999 #0.9
+    cost: 2
+    access: root
+  e_smtp:
+    service: smtp
+    os: linux #windows
+    prob: 0.999999 #0.9
+    cost: 3
+    access: root #user
+privilege_escalation:
+  pe_tomcat:
+    process: tomcat
+    os: linux
+    prob: 1.0
+    cost: 1
+    access: root
+  pe_daclsvc:
+    process: proftpd #daclsvc
+    os: linux #windows
+    prob: 1.0
+    cost: 1
+    access: root
+  pe_schtask:
+    process: cron #schtask
+    os: linux #windows
+    prob: 1.0
+    cost: 1
+    access: root
+service_scan_cost: 1
+os_scan_cost: 1
+subnet_scan_cost: 1
+process_scan_cost: 1
+host_configurations:
+  (1, 0):
+    os: linux
+    services: [ssh]
+    processes: [tomcat]
+  (1, 1):
+    os: linux
+    services: [ssh]
+    processes: [tomcat]
+  (2, 0):
+    os: linux #windows
+    services: [smtp]
+    processes: []
+  (2, 1):
+    os: linux #windows
+    services: [smtp]
+    processes: [cron] #[schtask]
+  (3, 0):
+    os: linux
+    services: [ssh]
+    processes: [tomcat]
+  (3, 1):
+    os: linux
+    services: [ssh, http]
+    processes: []
+  (3, 2):
+    os: linux
+    services: [ssh]
+    processes: []
+  (3, 3):
+    os: linux
+    services: [ssh]
+    processes: []
+  (3, 4):
+    os: linux
+    services: [ssh]
+    processes: [tomcat]
+  (3, 5):
+    os: linux
+    services: [ssh]
+    processes: []
+  (4, 0):
+    os: linux #windows
+    services: [ftp]
+    processes: [proftpd] #[daclsvc]
+  (4, 1):
+    os: linux #windows
+    services: [ftp]
+    processes: [proftpd] #[daclsvc]
+  (5, 0):
+    os: linux #windows
+    services: [ftp]
+    processes: [proftpd, cron] #[daclsvc, schtask]
+  (5, 1):
+    os: linux #windows
+    services: [ftp, http]
+    processes: []
+  (6, 0):
+    os: linux
+    services: [ssh]
+    processes: [tomcat]
+  (6, 1):
+    os: linux #windows
+    services: [ssh, samba]
+    processes: []
+firewall:
+  (0, 1): []
+  (1, 0): []
+  (0, 4): []
+  (4, 0): []
+  (0, 5): [http]
+  (5, 0): []
+  (0, 6): [samba]
+  (6, 0): []
+  (1, 2): []
+  (2, 1): [ssh]
+  (1, 3): []
+  (3, 1): [ssh]
+  (2, 3): [http]
+  (3, 2): [smtp]
+  (2, 4): [ftp]
+  (4, 2): [smtp]
+  (2, 5): [ftp]
+  (5, 2): [smtp]
+  (2, 6): [ftp, ssh]
+  (6, 2): [smtp]
+step_limit: 2000
