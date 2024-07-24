@@ -350,4 +350,4 @@ if __name__ == "__main__":
     start = time.time()
     main(sys.argv[1:])
     end = time.time()
-    print(f"Execution Time: {end-start:1.6f}s")
+    #print(f"Execution Time: {end-start:1.6f}s")

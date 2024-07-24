@@ -128,7 +128,7 @@ def generate_firewall_scripts( database,
 
         create_firewall_script(range_id,
                                 networks,
-                                database[storyboard.HOST_IP],
+                                database[storyboard.HOST_MGMT_ADDR],
                                 host_list,
                                 additional_port_list,
                                 host,

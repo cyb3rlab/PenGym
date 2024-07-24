@@ -121,6 +121,7 @@ class Storyboard():
     HOST_SETTINGS = 'host_settings'
     ID = 'id'
     MGMT_ADDR = 'mgmt_addr'
+    HOST_MGMT_ADDR ='host_mgmt_addr'
     VIRBR_ADDR = 'virbr_addr'
 
     ## Guest settings

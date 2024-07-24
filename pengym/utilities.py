@@ -700,6 +700,5 @@ def replace_file_path(database, file_name):
     return database[storyboard.FILE_PATH][file_name]\
             .replace(storyboard.SCENARIO_NAME_PATTERN, database[storyboard.SCENARIO_NAME])\
             .replace(storyboard.PENGYM_SOURCE_PATTERN, database[storyboard.PENGYM_SOURCE])\
-            .replace(storyboard.CYRIS_SOURCE_PATTERN, database[storyboard.CYRIS_SOURCE])\
             .replace(storyboard.RANGE_ID_PATTERN, str(database[storyboard.RANGE_ID]))\
             .replace(storyboard.CYBER_RANGE_DIR_PATTERN, database[storyboard.CYBER_RANGE_DIR])

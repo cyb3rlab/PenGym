@@ -20,10 +20,10 @@
     - execute_program:
       - program: /bin/cyberrange/database/resources/tomcat/install_tomcat.sh
         interpreter: bash
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_cron_service.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-1-0_firewall.sh
         interpreter: bash
         execute_time: after_clone
@@ -43,10 +43,10 @@
     - execute_program:
       - program: /bin/cyberrange/database/resources/tomcat/install_tomcat.sh
         interpreter: bash
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_cron_service.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-1-1_firewall.sh
         interpreter: bash
         execute_time: after_clone
@@ -70,15 +70,15 @@
       - program: /bin/cyberrange/database/resources/smtp/start_smtp.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_cron_service.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_pe_tomcat.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-2-0_firewall.sh
-          /bin/cyberrange/database/configuraion_scripts/stop_ssh_service.sh
+          /bin/cyberrange/database/configuration_scripts/stop_ssh_service.sh
         interpreter: bash
         execute_time: after_clone
   - id: host-2-1
@@ -106,12 +106,12 @@
       - program: /bin/cyberrange/database/resources/cron/config_cron.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_pe_tomcat.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-2-1_firewall.sh
-          /bin/cyberrange/database/configuraion_scripts/stop_ssh_service.sh
+          /bin/cyberrange/database/configuration_scripts/stop_ssh_service.sh
         interpreter: bash
         execute_time: after_clone
   - id: host-3-0
@@ -130,10 +130,10 @@
     - execute_program:
       - program: /bin/cyberrange/database/resources/tomcat/install_tomcat.sh
         interpreter: bash
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_cron_service.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-3-0_firewall.sh
         interpreter: bash
         execute_time: after_clone
@@ -160,13 +160,13 @@
       - program: /bin/cyberrange/database/resources/http/start_apache.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_cron_service.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_pe_tomcat.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-3-1_firewall.sh
         interpreter: bash
         execute_time: after_clone
@@ -184,13 +184,13 @@
       - src: /home/cyuser/public/PenGym/cyber_range
         dst: /bin/cyberrange
     - execute_program:
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_cron_service.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_pe_tomcat.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-3-2_firewall.sh
         interpreter: bash
         execute_time: after_clone
@@ -208,13 +208,13 @@
       - src: /home/cyuser/public/PenGym/cyber_range
         dst: /bin/cyberrange
     - execute_program:
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_cron_service.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_pe_tomcat.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-3-3_firewall.sh
         interpreter: bash
         execute_time: after_clone
@@ -234,10 +234,10 @@
     - execute_program:
       - program: /bin/cyberrange/database/resources/tomcat/install_tomcat.sh
         interpreter: bash
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_cron_service.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-3-4_firewall.sh
         interpreter: bash
         execute_time: after_clone
@@ -255,13 +255,13 @@
       - src: /home/cyuser/public/PenGym/cyber_range
         dst: /bin/cyberrange
     - execute_program:
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_cron_service.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_pe_tomcat.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-3-5_firewall.sh
         interpreter: bash
         execute_time: after_clone
@@ -291,15 +291,15 @@
       - program: /bin/cyberrange/database/resources/proftpd/start_proftpd.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_cron_service.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_pe_tomcat.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-4-0_firewall.sh
-          /bin/cyberrange/database/configuraion_scripts/stop_ssh_service.sh
+          /bin/cyberrange/database/configuration_scripts/stop_ssh_service.sh
         interpreter: bash
         execute_time: after_clone
   - id: host-4-1
@@ -328,15 +328,15 @@
       - program: /bin/cyberrange/database/resources/proftpd/start_proftpd.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_cron_service.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_pe_tomcat.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-4-1_firewall.sh
-          /bin/cyberrange/database/configuraion_scripts/stop_ssh_service.sh
+          /bin/cyberrange/database/configuration_scripts/stop_ssh_service.sh
         interpreter: bash
         execute_time: after_clone
   - id: host-5-0
@@ -370,12 +370,12 @@
       - program: /bin/cyberrange/database/resources/cron/config_cron.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_pe_tomcat.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-5-0_firewall.sh
-          /bin/cyberrange/database/configuraion_scripts/stop_ssh_service.sh
+          /bin/cyberrange/database/configuration_scripts/stop_ssh_service.sh
         interpreter: bash
         execute_time: after_clone
   - id: host-5-1
@@ -404,15 +404,15 @@
       - program: /bin/cyberrange/database/resources/http/start_apache.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_cron_service.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_pe_tomcat.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-5-1_firewall.sh
-          /bin/cyberrange/database/configuraion_scripts/stop_ssh_service.sh
+          /bin/cyberrange/database/configuration_scripts/stop_ssh_service.sh
         interpreter: bash
         execute_time: after_clone
   - id: host-6-0
@@ -431,10 +431,10 @@
     - execute_program:
       - program: /bin/cyberrange/database/resources/tomcat/install_tomcat.sh
         interpreter: bash
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_cron_service.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-6-0_firewall.sh
         interpreter: bash
         execute_time: after_clone
@@ -461,13 +461,13 @@
       - program: /bin/cyberrange/database/resources/samba/start_samba.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_cron_service.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_cron_service.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/deactive_pe_tomcat.sh
+      - program: /bin/cyberrange/database/configuration_scripts/deactive_pe_tomcat.sh
         interpreter: bash
         execute_time: after_clone
-      - program: /bin/cyberrange/database/configuraion_scripts/execute_programs.sh
+      - program: /bin/cyberrange/database/configuration_scripts/execute_programs.sh
         args: /bin/cyberrange/cyber_range/medium-multi-site/firewall/host-6-1_firewall.sh
         interpreter: bash
         execute_time: after_clone
