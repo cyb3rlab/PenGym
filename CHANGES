@@ -1,4 +1,60 @@
 
+PenGym v0.2
+-----------
+* Second public release of PenGym supports more complex scenarios.
+  The main changes are listed below:
+    - Ran pentesting paths with all available scenarios in NASim
+    - Created CyRIS cyber range description automatically based on PenGym scenario
+    - Implemented opimization mechanisms for action execution time and training time
+    - Fixed several issues in NASim to revise the correrct logical simulations
+    (References: https://github.com/Jjschwartz/NetworkAttackSimulator/issues
+    - Issues 45, 46, 47)
+
+*  Added cyber_range folder where cyber range descriptions and neccessary files are to be instantiated.
+   It contains a sample folder of medium-multi-site for reference.
+
+* Re-organized database folder for consistency, including the following folders:
+    - configuration_scripts: contains additional scripts for cyber range configuration
+    - resources: contains services and process installation scripts
+    - scenarios: available scenario files in PenGym, which created based on NASim scenario files
+
+* Added cyber_range_creation folders inside the pengym directory, which contain modules
+  that automatically create cyber range descriptions from PenGym scenarios.
+  A sample folder of the medium-multi-site scenario are created for reference
+
+* Added a scripts folder inside the pengym/envs directory. This folder contains bash script files
+  for updating, reseting firewall and gateway configurations within VMs during the pentesting period.
+  It supports the main server (KVM host), which controls and manages the actions executed on other VM hosts.
+
+* Revised run.py file to integrate host_map and bridge_map creation functions,
+  restore firewall status of VMs functions, and changed pentesting path to be compatible
+  with medium-multi-site scenarios, the largest scenario.
+
+* Revised network.py file with minor bug fixes, measured execution time,
+  and overridden traffic permitted functions to fix modeling issues in NASim
+
+* Revised the host_vector.py file with several implementations:
+    - Implemented all actions in the action space in NASim
+    - Integrated host_map and boolean flag mechanisms to optimize execution time
+    - Measured execution time of each action
+    - Implemented functions to fix modeling issues in NASim
+
+* Revised the utilities.py file with several additional functions:
+    - Implemented functions to intialize host_map and bridge_map automatically
+    - Implemented function to restore the firewall state of the entire VM hosts
+    - Implemented additional functions which support the action execution in complex scenarios
+      such as function to control and manage the bridge and gateway states
+
+* Revised storyboard.py file with more constant values
+
+* Other minor improvements and bug fixes
+
+* Updated the README.md file to provide package installation requirements,
+  revise the quick start part which includes cyber range description creation.
+
+* Updated the CONFIG.yml file with more configuration information
+  which include cyber range description creation and action execution processes.
+
 PenGym v0.1
 -----------
 * First public release of PenGym, a pentesting training framework for

@@ -32,9 +32,8 @@ module in charge of creating the cyber range, which is the [Cyber
 Range Instantiation System](https://github.com/crond-jaist/cyris)
 (**CyRIS**) previously developed at JAIST. CyRIS uses the descriptions
 in the **RangeDB** database to create cyber ranges that were
-specifically designed for RL agent training. Currently, CyRIS must be
-executed manually to create the cyber range, but in the future this
-process will be automated.
+specifically designed for RL agent training. Currently, PenGym has 
+integrated CyRIS to automate the cyber range creation process.
 
 <div align=center><img src='figures/pengym_overview.png'></div>
 
@@ -73,6 +72,16 @@ it, as it will be explained next:
    CyRIS User Guide, in particular the Appendix "Guest VM Base Image
    Preparation".
 
+   Additionally, the services, process packages need to be prepared 
+   in advance inside `database/resources` directory as desribed below:
+
+   | Service/process | Required packages |
+   | --- | --- |
+   | `ftp` | vsftpd-2.3.4 |
+   | `proftpd` | proftpd-1.3.3 |
+   | `samba` | samba-4.5.9 |
+   | `smtp` | opensmtpd-6.6.1p1 |
+
 4. **Nmap**: The Action/State module implementation uses `nmap` for
    actions such as port and network scanning. To install `nmap` and
    the corresponding Python module `python-nmap` run the following:
@@ -109,54 +118,53 @@ from the most recent release or by using the `git clone` command. Then
 you should update the following files to ensure that they match your
 installation:
 
-1. `pengym/CONFIG.yml`, in which global PenGym settings are
-configured. In particular, the **host_ip** settting specifies the IP
-address of the host on which the cyber range is deployed, and the
-**e_ssh_pwd_file** specifies the location of the dictionary file used
-for the SSH exploit action implementation.
+1. `pengym/CONFIG.yml`, in which global PenGym settings are configured. 
+The configure and path information should be updated based on your own paths,
+as described below:
 
-2. `database/tiny/tiny-pengym-cyris.yml`, which is the CyRIS cyber
-range description corresponding to the scenario `tiny`. In particular,
-the **basevm_config_file** setting specifies the location of the base
-VM image used to create cyber range VMs, and the **src** setting
-specifies the location of the directory containing the cyber range
-resources for the **copy_content** CyRIS task.
+   | Parameter | Description |
+   | --- | --- |
+   | `pengym_source` | The location of PenGym folder |
+   | `cyber_range_dir` | The location where the cyber range is to be instantiated in CyRIS (it must be the same as the path in CyRIS CONFIG) |
+   | `host_mgmt_addr` | The IP of main server on which the cyber range is running (localhost) |
+   | `host_virbr_addr` | The IP address of the main server where the cyber range is created |
+   | `host_account` | The account of the main server used to host the VMs in KVM |
+   | `guest_basevm_config_file` | The location of the base VM image used to create cyber range guest VMs |
+   | `scenario_name` | The name of the scenario that is used for conducting the pentesting path (we used `medium-multi-site` scenario for demonstration) |
+   
+   Another configure information such as ports and `msfrpc_config` can be updated based on your actual setting.
 
-Currently, PenGym supports all the features of the `tiny` scenario
-defined in NASim. However, PenGym uses the `pkexec` package for
-privilege escalation instead of `tomcat`, hence the **pe_pkexec**
-action is implemented instead of **pe_tomcat**.
-
+2. `run.py`, which is used to run the pentesting execution in PenGym. 
+In this demo, we use the deterministic path of the `medium-multi-site` scenario 
+for executing pentesting. This path should be updated based on the current situation.
 
 ## Quick Start
 
 In order to see PenGym in action, you must first create the cyber
 range, then run the included demo script. The example cyber range is
-based on the `tiny` scenario in NASim, and is defined in the file
-`tiny-pengym-cyris.yml`; this file may need to be changed depending
-on your CyRIS setup, so check it before proceeding. The example agent
-is currently a deterministic agent that can reach the scenario goals
-in 14 steps; its implementation and default action sequence are
-included in the file `run.py`.
+created automatically based on the `medium-multi-site` scenario.
 
-The two commands that must be run are as follows (we assume you are
+The example agent is currently a deterministic agent that can reach the scenario goals
+in 16 steps; its implementation and default action sequence are included in the file `run.py`.
+
+The three commands that must be run are as follows (we assume you are
 located in the PenGym directory):
 
-1. Run CyRIS by providing the path to the directory where it is
-   installed:
+1. Run the `range_description_creation.py` file to create the CyRIS description.
+    Then, it is used to create the cyber range via CyRIS. The description file will be located in the `cyber_range/<scenario_name>` directory.
+
+    ```
+    python3 ./pengym/cyber_range_creation/range_description_creation.py ./pengym/CONFIG.yml 
+    ```
+
+2. Run CyRIS by providing the path to the directory where it is
+   installed to create a cyber range:
 
    ```
-   <CYRIS_PATH>/main/cyris.py database/tiny/tiny-pengym-cyris.yml <CYRIS_PATH>/CONFIG
+   <CYRIS_PATH>/main/cyris.py <CYRIS_DESCRIPTION_PATH> <CYRIS_PATH>/CONFIG
    ```
 
-   If you modify the cyber range settings, such as the **range_id**
-   value in the CyRIS scenario file, you also need to update the
-   settings in the file `pengym/utilities.py`, in particular the IP
-   addresses in **host_map** and bridge names in **bridge_map**. In
-   addition, the IP addresses in the firewall configuration scripts in
-   `database/tiny/resources/scripts/firewall` must also be updated.
-
-2. Run the PenGym demo script with the configuration file as argument:
+3. Run the PenGym demo script with the configuration file as argument:
 
    ```
    python3 run.py ./pengym/CONFIG.yml
@@ -175,43 +183,46 @@ located in the PenGym directory):
    PenGym: Pentesting Training Framework for Reinforcement Learning Agents
    #########################################################################
    * Execution parameters:
-     - Agent type: deterministic
-     - PenGym cyber range execution enabled: True
-     - NASim simulation execution enabled: False
+   - Agent type: deterministic
+   - PenGym cyber range execution enabled: True
+   - NASim simulation execution enabled: False
+   * Create environment using custom scenario from './pengym/scenarios/medium-multi-site-pengym.yaml'...
    * Read configuration from './pengym/CONFIG.yml'...
    * Initialize MSF RPC client...
    * Initialize Nmap Scanner...
-   * Create environment using scenario 'tiny'...
-     Successfully created environment using scenario 'tiny'
    * Execute pentesting using a DETERMINISTIC agent...
-   - Step 1: OSScan: target=(1, 0), cost=1.00, prob=1.00, req_access=USER
-     Host (1, 0) Action 'os_scan' SUCCESS: os={'linux': 1.0} Execution Time: 4.205273
-   - Step 2: ServiceScan: target=(1, 0), cost=1.00, prob=1.00, req_access=USER
-     Host (1, 0) Action 'service_scan' SUCCESS: services={'ssh': 1.0} Execution Time: 0.241904
-   - Step 3: Exploit: target=(1, 0), cost=1.00, prob=0.80, req_access=USER, os=linux, service=ssh, access=1
-     Host (1, 0) Action 'e_ssh' SUCCESS: access=USER services={'ssh': 1.0} os={'linux': 1.0} Execution Time: 1.054823
-   - Step 4: SubnetScan: target=(1, 0), cost=1.00, prob=1.00, req_access=USER
-     Host (1, 0) Action 'subnet_scan' SUCCESS: discovered={(1, 0): True, (2, 0): True, (3, 0): True} newly_discovered={(1, 0): False, (2, 0): True, (3, 0): True} Execution Time: 2.452376
-   - Step 5: OSScan: target=(3, 0), cost=1.00, prob=1.00, req_access=USER
-     Host (3, 0) Action 'os_scan' SUCCESS: os={'linux': 1.0} Execution Time: 4.179169
-   - Step 6: ServiceScan: target=(3, 0), cost=1.00, prob=1.00, req_access=USER
-     Host (3, 0) Action 'service_scan' SUCCESS: services={'ssh': 1.0} Execution Time: 0.285325
-   - Step 7: Exploit: target=(3, 0), cost=1.00, prob=0.80, req_access=USER, os=linux, service=ssh, access=1
-     Host (3, 0) Action 'e_ssh' SUCCESS: access=USER services={'ssh': 1.0} os={'linux': 1.0} Execution Time: 0.736583
-   - Step 8: ProcessScan: target=(3, 0), cost=1.00, prob=1.00, req_access=USER
-     Host (3, 0) Action 'process_scan' SUCCESS: processes={'tomcat': 1.0} access=USER Execution Time: 1.417039
-   - Step 9: PrivilegeEscalation: target=(3, 0), cost=1.00, prob=1.00, req_access=USER, os=linux, process=tomcat, access=2
-     Host (3, 0) Action 'pe_tomcat' SUCCESS: access=ROOT processes={'tomcat': 1.0} os={'linux': 1.0} Execution Time: 18.134254
-   - Step 10: OSScan: target=(2, 0), cost=1.00, prob=1.00, req_access=USER
-     Host (2, 0) Action 'os_scan' SUCCESS: os={'linux': 1.0} Execution Time: 6.818980
-   - Step 11: ServiceScan: target=(2, 0), cost=1.00, prob=1.00, req_access=USER
-     Host (2, 0) Action 'service_scan' SUCCESS: services={'ssh': 1.0} Execution Time: 0.651496
-   - Step 12: Exploit: target=(2, 0), cost=1.00, prob=0.80, req_access=USER, os=linux, service=ssh, access=1
-     Host (2, 0) Action 'e_ssh' SUCCESS: access=USER services={'ssh': 1.0} os={'linux': 1.0} Execution Time: 3.850929
-   - Step 13: ProcessScan: target=(2, 0), cost=1.00, prob=1.00, req_access=USER
-     Host (2, 0) Action 'process_scan' SUCCESS: processes={'tomcat': 1.0} access=USER Execution Time: 1.403138
-   - Step 14: PrivilegeEscalation: target=(2, 0), cost=1.00, prob=1.00, req_access=USER, os=linux, process=tomcat, access=2
-     Host (2, 0) Action 'pe_tomcat' SUCCESS: access=ROOT processes={'tomcat': 1.0} os={'linux': 1.0} Execution Time: 18.143280
-   * NORMAL execution: 14 steps
+   - Step 1: OSScan: target=(5, 1), cost=1.00, prob=1.00, req_access=USER
+     Host (5, 1) Action 'os_scan' SUCCESS: os={'linux': 1.0} Execution Time: 5.531204
+   - Step 2: ServiceScan: target=(5, 1), cost=1.00, prob=1.00, req_access=USER
+     Host (5, 1) Action 'service_scan' SUCCESS: services={'ssh': 0.0, 'ftp': 0.0, 'http': 1.0, 'samba': 0.0, 'smtp': 0.0} Execution Time: 1.950998
+   - Step 3: Exploit: target=(5, 1), cost=2.00, prob=1.00, req_access=USER, os=None, service=http, access=1
+     Host (5, 1) Action 'e_http' SUCCESS: access=USER services={'ssh': 0.0, 'ftp': 0.0, 'http': 1.0, 'samba': 0.0, 'smtp': 0.0} os={'linux': 1.0} Execution Time: 6.973643
+   - Step 4: SubnetScan: target=(5, 1), cost=1.00, prob=1.00, req_access=USER
+     Host (5, 1) Action 'subnet_scan' SUCCESS: discovered={(1, 0): False, (1, 1): False, (2, 0): True, (2, 1): True, (3, 0): False, (3, 1): False, (3, 2): False, (3, 3): False, (3, 4): False, (3, 5): False, (4, 0): False, (4, 1): False, (5, 0): True, (5, 1): True, (6, 0): False, (6, 1): False} newly_discovered={(1, 0): False, (1, 1): False, (2, 0): True, (2, 1): True, (3, 0): False, (3, 1): False, (3, 2): False, (3, 3): False, (3, 4): False, (3, 5): False, (4, 0): False, (4, 1): False, (5, 0): True, (5, 1): False, (6, 0): False, (6, 1): False} Execution Time: 6.284184
+   - Step 5: OSScan: target=(2, 1), cost=1.00, prob=1.00, req_access=USER
+     Host (2, 1) Action 'os_scan' SUCCESS: os={'linux': 1.0} Execution Time: 4.580497
+   - Step 6: ServiceScan: target=(2, 1), cost=1.00, prob=1.00, req_access=USER
+     Host (2, 1) Action 'service_scan' SUCCESS: services={'ssh': 0.0, 'ftp': 0.0, 'http': 0.0, 'samba': 0.0, 'smtp': 1.0} Execution Time: 0.943482
+   - Step 7: Exploit: target=(2, 1), cost=3.00, prob=1.00, req_access=USER, os=linux, service=smtp, access=2
+     Host (2, 1) Action 'e_smtp' SUCCESS: access=ROOT services={'ssh': 0.0, 'ftp': 0.0, 'http': 0.0, 'samba': 0.0, 'smtp': 1.0} os={'linux': 1.0} Execution Time: 6.661961
+   - Step 8: SubnetScan: target=(2, 1), cost=1.00, prob=1.00, req_access=USER
+     Host (2, 1) Action 'subnet_scan' SUCCESS: discovered={(1, 0): True, (1, 1): True, (2, 0): True, (2, 1): True, (3, 0): True, (3, 1): True, (3, 2): True, (3, 3): True, (3, 4): True, (3, 5): True, (4, 0): True, (4, 1): True, (5, 0): True, (5, 1): True, (6, 0): True, (6, 1): True} newly_discovered={(1, 0): True, (1, 1): True, (2, 0): False, (2, 1): False, (3, 0): True, (3, 1): True, (3, 2): True, (3, 3): True, (3, 4): True, (3, 5): True, (4, 0): True, (4, 1): True, (5, 0): False, (5, 1): False, (6, 0): True, (6, 1): True} Execution Time: 15.060795
+   - Step 9: OSScan: target=(3, 1), cost=1.00, prob=1.00, req_access=USER
+     Host (3, 1) Action 'os_scan' SUCCESS: os={'linux': 1.0} Execution Time: 5.693840
+   - Step 10: ServiceScan: target=(3, 1), cost=1.00, prob=1.00, req_access=USER
+     Host (3, 1) Action 'service_scan' SUCCESS: services={'ssh': 0.0, 'ftp': 0.0, 'http': 1.0, 'samba': 0.0, 'smtp': 0.0} Execution Time: 7.743670
+   - Step 11: Exploit: target=(3, 1), cost=2.00, prob=1.00, req_access=USER, os=None, service=http, access=1
+     Host (3, 1) Action 'e_http' SUCCESS: access=USER services={'ssh': 0.0, 'ftp': 0.0, 'http': 1.0, 'samba': 0.0, 'smtp': 0.0} os={'linux': 1.0} Execution Time: 6.689062
+   - Step 12: OSScan: target=(3, 4), cost=1.00, prob=1.00, req_access=USER
+     Host (3, 4) Action 'os_scan' SUCCESS: os={'linux': 1.0} Execution Time: 3.704905
+   - Step 13: ServiceScan: target=(3, 4), cost=1.00, prob=1.00, req_access=USER
+     Host (3, 4) Action 'service_scan' SUCCESS: services={'ssh': 1.0, 'ftp': 0.0, 'http': 0.0, 'samba': 0.0, 'smtp': 0.0} Execution Time: 0.595288
+   - Step 14: Exploit: target=(3, 4), cost=3.00, prob=1.00, req_access=USER, os=linux, service=ssh, access=1
+     Host (3, 4) Action 'e_ssh' SUCCESS: access=USER services={'ssh': 1.0, 'ftp': 0.0, 'http': 0.0, 'samba': 0.0, 'smtp': 0.0} os={'linux': 1.0} Execution Time: 1.365891
+   - Step 15: ProcessScan: target=(3, 4), cost=1.00, prob=1.00, req_access=USER
+     Host (3, 4) Action 'process_scan' SUCCESS: processes={'tomcat': 1.0, 'proftpd': 0.0, 'cron': 0.0} access=USER Execution Time: 1.024053
+   - Step 16: PrivilegeEscalation: target=(3, 4), cost=1.00, prob=1.00, req_access=USER, os=linux, process=tomcat, access=2
+     Host (3, 4) Action 'pe_tomcat' SUCCESS: access=ROOT processes={'tomcat': 1.0, 'proftpd': 0.0, 'cron': 0.0} os={'linux': 1.0} Execution Time: 17.723360
+   * NORMAL execution: 16 steps
    * Clean up MSF RPC client...
    ```
