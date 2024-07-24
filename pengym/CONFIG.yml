@@ -3,8 +3,19 @@
 # Global configuration values in PenGym
 #########################################
 
-# IP of host on which the cyber range is running
-host_ip: 172.16.1.4
+pengym_source: home/cyuser/public/PenGym
+
+# Should be the same as path in CyRIS CONFIG
+cyber_range_dir: home/cyuser/public/cyris/cyber_range
+
+host_mgmt_addr: 172.16.1.4
+host_virbr_addr: 192.168.122.1
+host_account: cyuser
+guest_basevm_config_file: /home/cyuser/images/ubuntubase.xml
+
+scenario_name: medium-multi-site
+
+range_id: 44
 
 # Configuration of the MSF RPC service
 msfrpc_config:
@@ -16,21 +27,208 @@ msfrpc_config:
 service_port:
   ssh: 22
   ftp: 21
-  http: 8080
+  http: 80
+  smtp: 25
+  samba: 445
+
+additional_port:
+  ftp: 6200 # VSFTP technique opens a backdoor on port 6200
+  proftpd: 2121 # proftpd process runs on port 2121
 
 # File path information
 file_path:
-  e_ssh_pwd_file: /home/cyuser/PenGym/pengym/dictionary.txt
+# General information
+  scenario_file: /{pengym_source}/database/scenarios/{scenario_name}.yml
+  cyris_description_file: /{pengym_source}/cyber_range/{scenario_name}
+  range_details_file: /{cyber_range_dir}/{range_id}/range_details-cr{range_id}.yml
+
+  # Task
+  ## add_account
+  e_ssh_pwd_file: /{pengym_source}/pengym/dictionary.txt
+
+  ## copy_content
+  db_src: /{pengym_source}/database
+  cyber_range_src: /{pengym_source}/cyber_range
+  dst: /bin/cyberrange
+
+  ## execute_program for cyber range creation
+  ## The path should be the path in database souces
+  
+  # ftp 
+  ftp_folder: /database/resources/ftp/vsftpd-2.3.4
+  ftp_prepare_pcks: /database/resources/ftp/prepare_pcks.sh
+  ftp_config_file: /database/resources/ftp/config_vsftpd.sh
+
+  # http 
+  http_folder: /database/resources/http/httpd-2.4.49
+  http_prepare_pcks: /database/resources/http/prepare_pcks.sh
+  http_config_file: /database/resources/http/config_apache.sh
+  http_start_file: /database/resources/http/start_apache.sh
+
+  # smtp 
+  smtp_folder: /database/resources/smtp/opensmtpd-6.6.1p1
+  smtp_prepare_pcks: /database/resources/smtp/prepare_pcks.sh
+  smtp_config_file: /database/resources/smtp/config_smtp.sh
+  smtp_start_file: /database/resources/smtp/start_smtp.sh
+
+  # samba
+  samba_folder: /database/resources/samba/samba-4.5.9
+  samba_prepare_pcks: /database/resources/samba/prepare_pcks.sh
+  samba_config_file: /database/resources/samba/config_samba.sh
+  samba_start_file: /database/resources/samba/start_samba.sh
+
+  # proftpd 
+  proftpd_folder: /database/resources/proftpd/proftpd-1.3.3
+  proftpd_prepare_pcks: /database/resources/proftpd/prepare_pcks.sh
+  proftpd_config_file: /database/resources/proftpd/config_proftpd.sh
+  proftpd_start_file: /database/resources/proftpd/start_proftpd.sh
+
+  # cron
+  cron_prepare_pcks: /database/resources/cron/prepare_pcks.sh
+  cron_config_file: /database/resources/cron/config_cron.sh
+  cron_injection_file: /database/resources/cron/cron_injection.sh
+
+  # tomcat
+  tomcat_install: /database/resources/tomcat/install_tomcat.sh
+
+  # Path for additional programs and firewalls
+  deactive_cron: /database/configuration_scripts/deactive_cron_service.sh 
+  deactive_pe_tomcat: /database/configuration_scripts/deactive_pe_tomcat.sh
+  firewall_rule_path: /cyber_range/{scenario_name}/firewall
+  stop_ssh: /database/configuration_scripts/stop_ssh_service.sh
+  config_firewall_stop_ssh: /database/configuration_scripts/execute_programs.sh # Use for execute couple of tasks: firewall and stop ssh
 
 # Cyber range configuration
 cyber_range:
 
+  # host setting
+  host_settings:
+    host_id: host_1
+    mgmt_addr: localhost
+    virbr_addr: host_virbr_addr
+    account: host_account
+  
+  # Guest_settings
   guest_settings:
+    basevm_host: host_1
+    basevm_config_file: guest_basevm_config_file
+    basevm_type: kvm
+
     # Tasks
     tasks:
       add_account:
         # Account, password and password file for the e_ssh action
-        ssh:
+        ssh: 
           account: test
           passwd: test1234
           pwd_file: e_ssh_pwd_file
+
+      copy_content:
+        src: [db_src, cyber_range_src]
+        dst: dst
+
+      execute_program:
+        ftp:
+          programs:
+          - program: ftp_prepare_pcks
+            interpreter: bash
+
+          - program: ftp_config_file
+            args: [ftp_folder]
+            interpreter: bash
+            execute_time: after_clone
+
+        http:
+          programs:
+          - program: http_prepare_pcks
+            interpreter: bash
+
+          - program: http_config_file
+            args: [http_folder]
+            interpreter: bash
+            execute_time: after_clone
+
+          - program: http_start_file
+            interpreter: bash
+            execute_time: after_clone
+
+        smtp:
+          programs:
+          - program: smtp_prepare_pcks
+            interpreter: bash
+
+          - program: smtp_config_file
+            args: [smtp_folder]
+            interpreter: bash
+            execute_time: after_clone
+
+          - program: smtp_start_file
+            interpreter: bash
+            execute_time: after_clone
+
+        samba:
+          programs:
+          - program: samba_prepare_pcks
+            interpreter: bash
+
+          - program: samba_config_file
+            args: [samba_folder]
+            interpreter: bash
+            execute_time: after_clone
+
+          - program: samba_start_file
+            interpreter: bash
+            execute_time: after_clone
+        
+        proftpd:
+          programs:
+          - program: proftpd_prepare_pcks
+            interpreter: bash
+
+          - program: proftpd_config_file
+            args: [proftpd_folder]
+            interpreter: bash
+            execute_time: after_clone
+
+          - program: proftpd_start_file
+            interpreter: bash
+            execute_time: after_clone
+
+        cron:
+          programs:
+            - program: cron_prepare_pcks
+              interpreter: bash
+
+            - program: cron_config_file
+              interpreter: bash
+              execute_time: after_clone
+
+        tomcat:
+          programs:
+            - program: tomcat_install
+              interpreter: bash
+
+        # Additional programs
+
+        ## Use for machine that does not run cron
+        deactive_cron:
+          programs:
+            - program: deactive_cron
+              interpreter: bash
+              execute_time: after_clone
+
+        ## Use for machine that does not available for pe_tomcat action
+        deactive_pe_tomcat: 
+          programs:
+            - program: deactive_pe_tomcat
+              interpreter: bash
+              execute_time: after_clone
+  
+  # Clone Settings
+  clone_settings:
+    hosts:
+      instance_number: 1
+      topology:
+        type: custom
+        networks:
+          interface: eth #Define network interface prefix
