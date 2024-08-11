@@ -81,6 +81,7 @@ it, as it will be explained next:
    | `proftpd` | proftpd-1.3.3 |
    | `samba` | samba-4.5.9 |
    | `smtp` | opensmtpd-6.6.1p1 |
+   | `http` | httpd-2.4.49 |
 
 4. **Nmap**: The Action/State module implementation uses `nmap` for
    actions such as port and network scanning. To install `nmap` and
