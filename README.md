@@ -233,7 +233,7 @@ For a research background about PenGym, please consult the following
 paper:
 
 * Huynh Phuong Thanh Nguyen, Kento Hasegawa, Kazuhide Fukushima, Razvan Beuran, "PenGym: Realistic training environment for reinforcement learning pentesting agents",
-Computers & Security, Volume 148, 2025, 104140, ISSN 0167-4048, (https://doi.org/10.1016/j.cose.2024.104140).
+Computers & Security, Volume 148, 2025, 104140, ISSN 0167-4048. ([open access](https://doi.org/10.1016/j.cose.2024.104140))
 
 * Nguyen, T., Chen, Z., Hasegawa, K., Fukushima, K. and Beuran, R.
   "PenGym: Pentesting Training Framework for Reinforcement Learning Agents",
